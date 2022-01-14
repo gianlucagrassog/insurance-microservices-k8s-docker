@@ -1,6 +1,26 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: purchase-service-db
+spec:
+  ports:
+    - port: 27017
+  selector:
+    app: purchase-service-db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: purchase-service
+spec:
+  ports:
+  - port: 8080
+  selector:
+    app: purchase-service
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: user-service-db
 spec:
   ports:

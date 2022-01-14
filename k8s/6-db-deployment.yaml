@@ -1,6 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: purchase-service-db
+spec:
+  selector:
+    matchLabels:
+      app: purchase-service-db
+  template:
+    metadata:
+      labels:
+        app: purchase-service-db
+    spec:
+      containers:
+        - name: purchase-service-db
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+          envFrom:
+            - configMapRef:
+                name: purchase-service-db-env-file
+            - secretRef:
+                name: db-secret-file
+          volumeMounts:
+            - mountPath: /data/db
+              name: purchase-service-db-volume
+      volumes:
+        - name: purchase-service-db-volume
+          hostPath:
+            path: /purchase-service-db-volume
+            type: DirectoryOrCreate
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: user-service-db
 spec:
   selector:

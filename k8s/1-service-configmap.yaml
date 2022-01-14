@@ -1,5 +1,19 @@
 apiVersion: v1
 data:
+  KAFKA_ADDRESS: kafkaserver:9092
+  KAFKA_GROUP_ID: purchase-service-group
+  KAFKA_TOPIC_1: purchase-user-topic
+  MONGODB_HOSTNAME: purchase-service-db
+  MONGODB_PORT: "27017"
+kind: ConfigMap
+metadata:
+  name: purchase-service-env-file
+---
+apiVersion: v1
+data:
+  KAFKA_ADDRESS: kafkaserver:9092
+  KAFKA_GROUP_ID: user-service-group
+  KAFKA_TOPIC_1: purchase-user-topic
   MONGODB_HOSTNAME: user-service-db
   MONGODB_PORT: "27017"
 kind: ConfigMap

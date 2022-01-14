@@ -21,3 +21,10 @@ spec:
             name: user-service
             port:
               number: 8080
+      - path: /purchases
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: purchase-service
+            port:
+              number: 8080
