@@ -28,3 +28,10 @@ spec:
             name: purchase-service
             port:
               number: 8080
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: policy-service
+            port:
+              number: 8080

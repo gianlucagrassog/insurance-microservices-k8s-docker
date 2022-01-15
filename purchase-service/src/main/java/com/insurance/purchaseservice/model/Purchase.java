@@ -12,15 +12,19 @@ public class Purchase {
     @Id
     private ObjectId _id;
     private ObjectId user;
+    private ObjectId policy;
     private String description;
     private PurchaseStatus status;
     private double total;
+    private Set<String> optionals_list = new HashSet<String>();
 
     @JsonCreator
-    public Purchase(ObjectId user, String description){
+    public Purchase(ObjectId user, ObjectId policy, String description, Set<String> optionals_list){
         this._id = new ObjectId();
         this.user = user;
+        this.policy = policy;
         this.description = description;
+        this.optionals_list = optionals_list;
         this.status = PurchaseStatus.PENDING;
     }
 
@@ -64,6 +68,20 @@ public class Purchase {
 
     public void setStatus(PurchaseStatus status) {
         this.status = status;
+    }
+
+    @JsonGetter("policy")
+    public String getPolicy() {
+        return policy.toHexString();
+    }
+
+    //@JsonGetter("optionals_list")
+    public Set<String> getOptionals_list() {
+        return optionals_list;
+    }
+
+    public void setOptionals_list(Set<String> optionals_list) {
+        this.optionals_list = optionals_list;
     }
 
     public double getTotal() {

@@ -49,3 +49,29 @@ spec:
                 name: user-service-env-file
             - secretRef:
                 name: db-secret-file
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-service
+spec:
+  selector:
+    matchLabels:
+      app: policy-service
+  template:
+    metadata:
+      labels:
+        app: policy-service
+    spec:
+      containers:
+        - name: policy-service
+          image: policy-service:v1
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: policy-service-db-env-file
+            - configMapRef:
+                name: policy-service-env-file
+            - secretRef:
+                name: db-secret-file

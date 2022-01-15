@@ -11,3 +11,10 @@ data:
 kind: ConfigMap
 metadata:
   name: user-service-db-env-file
+---
+apiVersion: v1
+data:
+  MONGO_INITDB_DATABASE: admin
+kind: ConfigMap
+metadata:
+  name: policy-service-db-env-file

@@ -17,11 +17,15 @@ public class UserListener {
     @Autowired
     ReactivePurchaseRepository repository;
 
+
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Value(value = "${KAFKA_TOPIC_1}")
     private String kafkaTopic1;
+
+    @Value(value = "${KAFKA_TOPIC_2}")
+    private String kafkaTopic2;
 
     @KafkaListener(topics="${KAFKA_TOPIC_1}")
     public void listen(String message) {
@@ -47,8 +51,11 @@ public class UserListener {
             if (exists) {
                 repository.findById(new ObjectId(purchase_id)).flatMap(purchase -> {
                     purchase.setStatus(status);
+                    kafkaTemplate.send(kafkaTopic2, "PolicyPurchase: Checking Policy|" + purchase.get_id_string() + "|" + purchase.getPolicy());
                     return repository.save(purchase);
                 }).subscribe();
+            } else {
+               // kafkaTemplate.send(kafkaTopic2,"BadMessage||" + message);
             }
             return Mono.just(exists);
         }).subscribe();

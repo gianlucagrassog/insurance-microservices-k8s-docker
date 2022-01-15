@@ -1,7 +1,7 @@
-package com.insurance.userservice.configs;
+package com.insurance.policyservice.configs;
 
-import com.insurance.userservice.kafkalisteners.PurchaseListener;
-import com.insurance.userservice.kafkalisteners.PolicyListener;
+import com.insurance.policyservice.kafkalisteners.PurchaseListener;
+import com.insurance.policyservice.kafkalisteners.UserListener;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +47,7 @@ public class KafkaConsumerConfig {
         return new PurchaseListener();
     }
     @Bean
-    public PolicyListener policyListener2() {
-        return new PolicyListener();
+    public UserListener userListener2() {
+        return new UserListener();
     }
 }

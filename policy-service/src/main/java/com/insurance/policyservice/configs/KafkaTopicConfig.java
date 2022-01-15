@@ -1,4 +1,4 @@
-package com.insurance.userservice.configs;
+package com.insurance.policyservice.configs;
 
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -17,8 +17,8 @@ public class KafkaTopicConfig {
     @Value(value = "${KAFKA_ADDRESS}")
     private String bootstrapAddress;
 
-    @Value(value = "${KAFKA_TOPIC_1}")
-    private String kafkaTopic1;
+    @Value(value = "${KAFKA_TOPIC_2}")
+    private String kafkaTopic2;
 
     @Value(value = "${KAFKA_TOPIC_3}")
     private String kafkaTopic3;
@@ -32,10 +32,11 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic topic1() {
-        return new NewTopic(kafkaTopic1, 100, (short) 1);
+        return new NewTopic(kafkaTopic2, 100, (short) 1);
     }
     @Bean
     public NewTopic topic2() {
         return new NewTopic(kafkaTopic3, 100, (short) 1);
     }
 }
+

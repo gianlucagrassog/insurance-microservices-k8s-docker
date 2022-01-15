@@ -3,6 +3,7 @@ data:
   KAFKA_ADDRESS: kafkaserver:9092
   KAFKA_GROUP_ID: purchase-service-group
   KAFKA_TOPIC_1: purchase-user-topic
+  KAFKA_TOPIC_2: purchase-policy-topic
   MONGODB_HOSTNAME: purchase-service-db
   MONGODB_PORT: "27017"
 kind: ConfigMap
@@ -14,8 +15,21 @@ data:
   KAFKA_ADDRESS: kafkaserver:9092
   KAFKA_GROUP_ID: user-service-group
   KAFKA_TOPIC_1: purchase-user-topic
+  KAFKA_TOPIC_3: policy-user-topic
   MONGODB_HOSTNAME: user-service-db
   MONGODB_PORT: "27017"
 kind: ConfigMap
 metadata:
   name: user-service-env-file
+---
+apiVersion: v1
+data:
+  KAFKA_ADDRESS: kafkaserver:9092
+  KAFKA_GROUP_ID: policy-service-group
+  KAFKA_TOPIC_2: purchase-policy-topic
+  KAFKA_TOPIC_3: policy-user-topic
+  MONGODB_HOSTNAME: policy-service-db
+  MONGODB_PORT: "27017"
+kind: ConfigMap
+metadata:
+  name: policy-service-env-file

@@ -58,7 +58,7 @@ public class PurchaseController {
         ObjectId purchase_id = new ObjectId(id);
         Purchase oldp = repository.findById(purchase_id).block();
         if (oldp == null)
-            return new ResponseEntity<>(Mono.just(new Purchase(null, null)), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Mono.just(new Purchase(null, null, null, null)), HttpStatus.NOT_FOUND);
 
         p.set_id(purchase_id);
 
