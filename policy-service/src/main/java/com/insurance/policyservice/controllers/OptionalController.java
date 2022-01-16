@@ -54,7 +54,7 @@ public class OptionalController {
         );
     }
 
-    @PostMapping(path="/", consumes={"application/JSON"}, produces="application/json")
+    @PostMapping(path = "/", consumes = {"application/JSON"}, produces = "application/json")
     public Mono<Optional> createOptional(@RequestBody Optional o) {
         return optional_repository.save(o);
     }

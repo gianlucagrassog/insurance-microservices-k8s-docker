@@ -4,6 +4,8 @@ data:
   KAFKA_GROUP_ID: purchase-service-group
   KAFKA_TOPIC_1: purchase-user-topic
   KAFKA_TOPIC_2: purchase-policy-topic
+  KAFKA_TOPIC_4: purchase-receipt-topic
+  KAFKA_TOPIC_5: receipt-purchase-topic
   MONGODB_HOSTNAME: purchase-service-db
   MONGODB_PORT: "27017"
 kind: ConfigMap
@@ -33,3 +35,13 @@ data:
 kind: ConfigMap
 metadata:
   name: policy-service-env-file
+---
+apiVersion: v1
+data:
+  KAFKA_ADDRESS: kafkaserver:9092
+  KAFKA_GROUP_ID: receipt-service-group
+  KAFKA_TOPIC_OUT: receipt-purchase-topic
+  KAFKA_TOPIC_IN: purchase-receipt-topic
+kind: ConfigMap
+metadata:
+  name: receipt-service-env-file

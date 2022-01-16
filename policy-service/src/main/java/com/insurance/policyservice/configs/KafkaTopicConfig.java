@@ -1,6 +1,5 @@
 package com.insurance.policyservice.configs;
 
-
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;

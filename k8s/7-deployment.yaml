@@ -75,3 +75,31 @@ spec:
                 name: policy-service-env-file
             - secretRef:
                 name: db-secret-file
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: receipt-service
+spec:
+  revisionHistoryLimit: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: receipt-service
+  template:
+    metadata:
+      labels:
+        app: receipt-service
+    spec:
+      containers:
+        - name: receipt-service
+          image: receipt-service:v1
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: receipt-service-env-file
+            - secretRef:
+                name: receipt-secret-file

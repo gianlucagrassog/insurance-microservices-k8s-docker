@@ -11,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: "/"
 spec:
   rules:
-  - host: insurance.dev.loc
+  - host: insurance.app.loc
     http:
       paths:
       - path: /users
@@ -35,3 +35,10 @@ spec:
             name: policy-service
             port:
               number: 8080
+      - path: /receipts
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: receipt-service
+            port:
+              number: 5000

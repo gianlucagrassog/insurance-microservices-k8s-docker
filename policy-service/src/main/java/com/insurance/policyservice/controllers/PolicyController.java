@@ -28,19 +28,6 @@ public class PolicyController {
         }
         return new ResponseEntity<>(p, HttpStatus.OK);
     }
-
-    @GetMapping("/")
-    public Flux<Policy> getPolicies() {
-        return repository.findAll();
-    }
-
-    @GetMapping("/{id}/exists")
-    public @ResponseBody ResponseEntity<Mono<Boolean>> exists(@PathVariable("id") String id) {
-        Mono<Boolean> ret = repository.existsById(new ObjectId(id));
-        return new ResponseEntity<>(ret, HttpStatus.OK);
-    }
-
-
     @DeleteMapping("/{id}")
     public @ResponseBody ResponseEntity<Boolean> deletePolicy(@PathVariable("id") String id) {
 
@@ -53,8 +40,21 @@ public class PolicyController {
                 true, HttpStatus.OK
         );
     }
+    @GetMapping("/")
+    public Flux<Policy> getPolicies() {
+        return repository.findAll();
+    }
 
-    @PostMapping(path="/", consumes={"application/JSON"}, produces="application/json")
+    @GetMapping("/{id}/exists")
+    public @ResponseBody ResponseEntity<Mono<Boolean>> exists(@PathVariable("id") String id) {
+        Mono<Boolean> ret = repository.existsById(new ObjectId(id));
+        return new ResponseEntity<>(ret, HttpStatus.OK);
+    }
+
+
+
+
+    @PostMapping(path = "/", consumes = {"application/JSON"}, produces = "application/json")
     public Mono<Policy> createPolicy(@RequestBody Policy p) {
         return repository.save(p);
     }

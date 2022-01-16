@@ -24,6 +24,9 @@ public class PolicyListener {
     @Value(value = "${KAFKA_TOPIC_2}")
     private String kafkaTopic2;
 
+    @Value(value = "${KAFKA_TOPIC_4}")
+    private String kafkaTopic4;
+
     @KafkaListener(topics="${KAFKA_TOPIC_2}")
     public void listen(String message) {
         System.out.println("Received message " + message);
@@ -84,9 +87,17 @@ public class PolicyListener {
                     purchase.setStatus(status);
                     return repository.save(purchase);
                 }).subscribe();
+                kafkaTemplate.send(kafkaTopic4, purchase_id+"|"+userName+"|"+policyType+"|"+total+"|"+optionalsPrice);
+
+            } else {
+                //kafkaTemplate.send(kafkaTopic4,"BadMessage||" + message);
             }
             return Mono.just(exists);
         }).subscribe();
+//        Purchase o = repository.findById(new ObjectId(purchase_id)).block();
+//        o.setTotal(total);
+//        o.setStatus(status);
+        //kafkaTemplate.send(kafkaTopic4, key + purchase_id + ...);
     }
 
 }

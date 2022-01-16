@@ -25,22 +25,18 @@ public class PurchaseController {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value(value="${KAFKA_TOPIC_1}")
+    @Value(value = "${KAFKA_TOPIC_1}")
     private String kafkaTopic1;
-
 
     @GetMapping("/")
     public Flux<Purchase> getPurchases() {
         return repository.findAll();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Purchase> getPurchase(@PathVariable("id") String id) {
-        Purchase p = repository.findById(new ObjectId(id)).block();
-        if (p == null) {
-            return new ResponseEntity<>(p, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(p, HttpStatus.OK);
+    @GetMapping(path = "/{id}/exists")
+    public Mono<Boolean> exists(@PathVariable("id") String id) {
+        ObjectId purchase_id = new ObjectId(id);
+        return repository.existsById(purchase_id);
     }
 
     @DeleteMapping("/{id}")
@@ -53,7 +49,16 @@ public class PurchaseController {
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(path="/{id}", consumes={"application/JSON"}, produces="application/json")
+    @GetMapping("/{id}")
+    public ResponseEntity<Purchase> getPurchase(@PathVariable("id") String id) {
+        Purchase p = repository.findById(new ObjectId(id)).block();
+        if (p == null) {
+            return new ResponseEntity<>(p, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(p, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{id}", consumes = {"application/JSON"}, produces = "application/json")
     public ResponseEntity<Mono<Purchase>> editPurchase(@PathVariable("id") String id, @RequestBody Purchase p) {
         ObjectId purchase_id = new ObjectId(id);
         Purchase oldp = repository.findById(purchase_id).block();
@@ -65,7 +70,7 @@ public class PurchaseController {
         return new ResponseEntity<>(repository.save(p), HttpStatus.OK);
     }
 
-    @PostMapping(path="/", consumes = "application/JSON", produces = "application/JSON")
+    @PostMapping(path = "/", consumes = "application/JSON", produces = "application/JSON")
     public Mono<Purchase> newPurchase(@RequestBody Purchase p) {
         return repository.save(p).flatMap(purchase -> {
             kafkaTemplate.send(kafkaTopic1, "PolicyPurchase: Checking User|" + p.get_user_string() + "|" + p.get_id_string());
@@ -74,9 +79,6 @@ public class PurchaseController {
 
     }
 
-    @GetMapping(path="/{id}/exists")
-    public Mono<Boolean> exists(@PathVariable("id") String id) {
-        ObjectId purchase_id = new ObjectId(id);
-        return repository.existsById(purchase_id);
-    }
 }
+
+

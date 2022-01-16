@@ -57,4 +57,14 @@ spec:
     - port: 8080
   selector:
     app: policy-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: receipt-service
+spec:
+  ports:
+    - port: 5000
+  selector:
+    app: receipt-service
 
