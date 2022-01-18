@@ -29,7 +29,6 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequiredArgsConstructor
 public class PurchaseController {
-
     @Autowired
     ReactivePurchaseRepository repository;
 
@@ -39,11 +38,10 @@ public class PurchaseController {
     @Value(value = "${KAFKA_TOPIC_1}")
     private String kafkaTopic1;
 
-    private final HelloMetrics metrics;
+    private final PurchaseMetrics metrics;
 
     @GetMapping("/")
     public Flux<Purchase> getPurchases() {
-        metrics.increment();
         return repository.findAll();
     }
 
@@ -86,6 +84,7 @@ public class PurchaseController {
 
     @PostMapping(path = "/", consumes = "application/JSON", produces = "application/JSON")
     public Mono<Purchase> newPurchase(@RequestBody Purchase p) {
+        metrics.increment();
         return repository.save(p).flatMap(purchase -> {
             kafkaTemplate.send(kafkaTopic1, "PolicyPurchase: Checking User|" + p.get_user_string() + "|" + p.get_id_string());
             return Mono.just(p);
@@ -97,8 +96,8 @@ public class PurchaseController {
 
 @Component
 @RequiredArgsConstructor
-class HelloMetrics {
-    @Qualifier("helloCounter")
+class PurchaseMetrics {
+    @Qualifier("purchaseCounter")
     private final Counter counter;
 
     void increment() {
@@ -112,12 +111,12 @@ class HelloMetrics {
 
 @Configuration
 @RequiredArgsConstructor
-class HelloMetricsConfig {
+class PurchaseMetricsConfig {
     @Bean
-    @Qualifier("helloCounter")
-    Counter helloCounter(MeterRegistry registry) {
-        return Counter.builder("hello_counter")
-                .description("Access counter")
+    @Qualifier("purchaseCounter")
+    Counter purchaseCounter(MeterRegistry registry) {
+        return Counter.builder("purchase_counter")
+                .description("Number of purchases")
                 .register(registry);
     }
 }
