@@ -1,0 +1,122 @@
+version: '3'
+
+x-mongo-secrets: 
+  MONGO_USER: &mongo-user root
+  MONGO_PASS: &mongo-pass toor
+  MONGO_AUTH_DB: &mongo-db admin
+  MONGO_HOST: mongo
+  MONGO_PORT: 27017
+  MONGO_DB_NAME: admin
+
+x-common-settings: &common-settings
+  restart: on-failure
+
+services:
+  mongo:
+    <<: *common-settings
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: *mongo-user
+      MONGO_INITDB_ROOT_PASSWORD: *mongo-pass
+    ports:
+      - "27017"
+
+
+  user-service:
+    <<: *common-settings
+    container_name: user-service
+    build: ./user-service
+    environment:
+      MONGODB_HOSTNAME: mongo
+      MONGODB_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: *mongo-user
+      MONGO_INITDB_ROOT_PASSWORD: *mongo-pass
+      MONGO_INITDB_DATABASE: *mongo-db
+      KAFKA_ADDRESS: kafkaserver:9092
+      KAFKA_GROUP_ID: user-service-group
+      KAFKA_TOPIC_1: purchase-user-topic
+      KAFKA_TOPIC_3: policy-user-topic
+    ports:
+      - 8081:8080
+  
+  purchase-service:
+    <<: *common-settings
+    container_name: purchase-service
+    build: ./purchase-service
+    environment:
+      MONGODB_HOSTNAME: mongo
+      MONGODB_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: *mongo-user
+      MONGO_INITDB_ROOT_PASSWORD: *mongo-pass
+      MONGO_INITDB_DATABASE: *mongo-db
+      KAFKA_ADDRESS: kafkaserver:9092
+      KAFKA_GROUP_ID: purchase-service-group
+      KAFKA_TOPIC_1: purchase-user-topic
+      KAFKA_TOPIC_2: purchase-policy-topic
+      KAFKA_TOPIC_4: purchase-receipt-topic
+      KAFKA_TOPIC_5: receipt-purchase-topic
+    ports:
+      - 8082:8080
+
+  policy-service:
+    <<: *common-settings
+    container_name: policy-service
+    build: ./policy-service
+    environment:
+      MONGODB_HOSTNAME: mongo
+      MONGODB_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: *mongo-user
+      MONGO_INITDB_ROOT_PASSWORD: *mongo-pass
+      MONGO_INITDB_DATABASE: *mongo-db
+      KAFKA_ADDRESS: kafkaserver:9092
+      KAFKA_GROUP_ID: policy-service-group
+      KAFKA_TOPIC_2: purchase-policy-topic
+      KAFKA_TOPIC_3: policy-user-topic
+    ports:
+      - 8083:8080
+
+  receipt-service:
+    <<: *common-settings
+    container_name: receipt-service
+    build: ./receipt-service
+    environment:
+      MONGODB_HOSTNAME: mongo
+      MONGODB_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: *mongo-user
+      MONGO_INITDB_ROOT_PASSWORD: *mongo-pass
+      MONGO_INITDB_DATABASE: *mongo-db
+      INSURANCE_EMAIL: "insuranceappdsbd@gmail.com"
+      EMAIL_PW: "yjUNr9ZKzQvfhAe"
+      KAFKA_ADDRESS: kafkaserver:9092
+      KAFKA_GROUP_ID: receipt-service-group
+      KAFKA_TOPIC_OUT: receipt-purchase-topic
+      KAFKA_TOPIC_IN: purchase-receipt-topic
+    ports:
+      - 8084:5000
+
+
+
+  zookeeper:
+    image:  library/zookeeper:3.4.13
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+  
+  kafka:
+    container_name: kafkaserver
+    image: wurstmeister/kafka:2.11-2.0.0
+    ports:
+      - "9092"
+      - "9999"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafkaserver
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_PORT: 9092
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.rmi.port=9999 -Djava.rmi.server.hostname=127.0.0.1"
+      JMX_PORT: 9999
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
