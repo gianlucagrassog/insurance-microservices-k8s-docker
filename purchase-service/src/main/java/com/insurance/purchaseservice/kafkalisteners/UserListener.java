@@ -40,7 +40,7 @@ public class UserListener {
 
         if (messageParts[0].equals("UserNotExists")) {
             String purchase_id = messageParts[1];
-            setPurchaseStatus(message, purchase_id, PurchaseStatus.DELETED, "PurchaseDeleted|");
+            setPurchaseStatus(message, purchase_id, PurchaseStatus.REJECTED, "PurchaseRejected|");
         }
 
     }

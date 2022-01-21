@@ -32,7 +32,10 @@ public class ReceiptListener {
         if (messageParts[0].equals("mailsent")) {
             String purchase_id = messageParts[1];
             setPurchaseStatus(purchase_id,PurchaseStatus.CONFIRMED);
-
+        }
+        if (messageParts[0].equals("mailnotsent")) {
+            String purchase_id = messageParts[1];
+            setPurchaseStatus(purchase_id,PurchaseStatus.REJECTED);
         }
     }
 

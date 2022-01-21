@@ -8,5 +8,5 @@ public enum PurchaseStatus implements Serializable {
     POLICY_CONFIRMED,
     PRICE_CALCULATED,
     CONFIRMED,
-    DELETED
+    REJECTED
 }

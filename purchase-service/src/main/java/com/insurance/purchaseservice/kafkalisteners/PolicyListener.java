@@ -43,7 +43,7 @@ public class PolicyListener {
         if (messageParts[0].equals("PolicyNotExists")) {
             String purchase_id = messageParts[1];
             String uid = messageParts[2];
-            setPurchaseStatus(message, purchase_id, uid, PurchaseStatus.DELETED, "PurchaseDeleted|");
+            setPurchaseStatus(message, purchase_id, uid, PurchaseStatus.REJECTED, "PurchaseRejected|");
         }
 
         if (messageParts[0].equals("PurchaseConfirmed")) {
