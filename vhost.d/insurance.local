@@ -1,0 +1,15 @@
+location /users {
+  proxy_pass http://user-service:8080/;
+}
+
+location /purchases {
+  proxy_pass http://purchase-service:8080/;
+}
+
+location /policies {
+  proxy_pass http://policy-service:8080;
+}
+
+location /optionals {
+  proxy_pass http://policy-service:8080;
+}
