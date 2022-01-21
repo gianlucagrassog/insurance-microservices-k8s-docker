@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: purchase-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: purchase-service
+  template:
+    metadata:
+      labels:
+        app: purchase-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: purchase-service
+          image: purchase-service:v1
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: purchase-service-db-env-file
+            - configMapRef:
+                name: purchase-service-env-file
+            - secretRef:
+                name: db-secret-file
