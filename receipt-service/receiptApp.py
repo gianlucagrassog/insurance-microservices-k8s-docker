@@ -53,10 +53,9 @@ Insurance company x""" % (email_data[1],email_data[2],email_data[3],policy_cost,
     session.quit()
     return result
 
-@app.route('/')
+@app.route('/ping')
 def hello_world():
-    send_email()
-    return "Hello word"
+    return 'pong'
 
 def register_kafka_listener(topic, listener):
     # Poll kafka

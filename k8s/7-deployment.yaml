@@ -107,3 +107,17 @@ spec:
                 name: receipt-service-env-file
             - secretRef:
                 name: receipt-secret-file
+          livenessProbe:
+            httpGet:
+              port: 5000
+              path: /ping
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              port: 5000
+              path: /ping
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 5

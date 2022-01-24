@@ -1,5 +1,4 @@
 package com.insurance.purchaseservice.controllers;
-
 import com.insurance.purchaseservice.model.Purchase;
 import com.insurance.purchaseservice.repository.ReactivePurchaseRepository;
 import org.bson.types.ObjectId;
@@ -12,7 +11,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +20,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor

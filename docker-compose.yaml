@@ -50,9 +50,8 @@ services:
       KAFKA_TOPIC_1: purchase-user-topic
       KAFKA_TOPIC_3: policy-user-topic
     ports:
-      - 8081:8080
- 
-  
+      - '8080'
+
   purchase-service:
     <<: *common-settings
     container_name: purchase-service
@@ -70,8 +69,7 @@ services:
       KAFKA_TOPIC_4: purchase-receipt-topic
       KAFKA_TOPIC_5: receipt-purchase-topic
     ports:
-      - 8082:8080
-    
+      - '8080'
 
   policy-service:
     <<: *common-settings
@@ -88,7 +86,7 @@ services:
       KAFKA_TOPIC_2: purchase-policy-topic
       KAFKA_TOPIC_3: policy-user-topic
     ports:
-      - 8083:8080
+      - '8080'
 
   receipt-service:
     <<: *common-settings
@@ -107,8 +105,7 @@ services:
       INSURANCE_EMAIL: "insuranceappdsbd@gmail.com"
       EMAIL_PW: "yjUNr9ZKzQvfhAe"
     ports:
-      - 8084:5000
-
+      - '5000'
   
   zookeeper:
     image:  library/zookeeper:3.4.13
