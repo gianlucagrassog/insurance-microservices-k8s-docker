@@ -1,6 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: purchase-service
+spec:
+  selector:
+    matchLabels:
+      app: purchase-service
+  template:
+    metadata:
+      labels:
+        app: purchase-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: purchase-service
+          image: purchase-service:v1
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: purchase-service-db-env-file
+            - configMapRef:
+                name: purchase-service-env-file
+            - secretRef:
+                name: db-secret-file
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: user-service
 spec:
   selector:

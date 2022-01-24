@@ -6,7 +6,6 @@ import json
 import time
 import os
 import smtplib
-from stmplib import *
 import threading
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -20,42 +19,43 @@ topic_in = str(os.environ.get('KAFKA_TOPIC_IN'))
 topic_out = str(os.environ.get('KAFKA_TOPIC_OUT'))
 
 def send_email(email_data):
+
     policy_cost=float(email_data[3])-float(email_data[4])
     sender_address = str(os.environ.get('INSURANCE_EMAIL'))
     sender_pass = str(os.environ.get('EMAIL_PW'))
-    receiver_address = 'user@gmail.com' #change with your email
+    receiver_address = 'rino.dipaola@gmail.com' #change with your email
     message = MIMEMultipart()
     message['from'] = sender_address
     message['ro'] = receiver_address
     message['subject'] = 'Policy purchase confirmation - Purchase number: '+email_data[0]
 
     message.attach(MIMEText("""Hi %s,
-
 Your policy %s will cost %s$.
-
 Purchase Details:
     - Policy base price %s$;
     - Optionals price %s$;
 Total: %s$.
     
 If there is any problem, feel free to contact us.
-
 Thanks for choosing us , 
 Insurance company x""" % (email_data[1],email_data[2],email_data[3],policy_cost,email_data[4],email_data[3])))
+
+    session = smtplib.SMTP('smtp.gmail.com', 587)
+    session.starttls() #enable security
+    session.login(sender_address, sender_pass)
+    text = message.as_string()
+    result = True
     try:
-        session = smtplib.SMTP('smtp.gmail.com', 587)
-        session.starttls() #enable security
-        session.login(sender_address, sender_pass)
-        text = message.as_string()
         session.sendmail(sender_address, receiver_address, text)
-        session.quit()
-        return True
-    except SMTPResponseException as e:
-        error_code = e.smtp_code
-        error_message = e.smtp_error
-        return False
+    except:
+        print("An exception occurred")
+        result = False
+    session.quit()
+    return result
+
 @app.route('/')
 def hello_world():
+    send_email()
     return "Hello word"
 
 def register_kafka_listener(topic, listener):
@@ -64,7 +64,7 @@ def register_kafka_listener(topic, listener):
         print("Thread partito")
         # Initialize consumer Instance
         consumer = KafkaConsumer(topic, bootstrap_servers=BOOTSTRAP_SERVERS,
-                                        api_version=(0, 10, 1))
+                                 api_version=(0, 10, 1))
         while True:
             consumer.poll(timeout_ms=5000)
             for msg in consumer:
@@ -78,11 +78,12 @@ def register_kafka_listener(topic, listener):
 def kafka_listener(data):
     print("Valore:\n", data.value.decode("utf-8"))
     email_data = (data.value.decode("utf-8")).split("|")
-    result=send_email(email_data)
+    res = send_email(email_data)
     producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
                              api_version=(0, 10, 1),
                              key_serializer=str.encode)
-    if result:
+
+    if(res == True):
         msg=('mailsent'+'|'+email_data[0]).encode("utf-8")
     else:
         msg=('mailnotsent'+'|'+email_data[0]).encode("utf-8")
