@@ -57,7 +57,7 @@ public class UserListener {
         if(policyType.compareTo("bonus malus")==0) {
             totalPrice += (25 * bmClass);
         }
-        else if(policyType.compareTo("furto e incendio")==0){
+        else if(policyType.compareTo("temporanea")==0){
             totalPrice += 200;
         }
         return totalPrice;
