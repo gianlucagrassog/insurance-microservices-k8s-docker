@@ -69,18 +69,6 @@ public class PurchaseController {
         return new ResponseEntity<>(p, HttpStatus.OK);
     }
 
-    @PutMapping(path = "/{id}", consumes = {"application/JSON"}, produces = "application/json")
-    public ResponseEntity<Mono<Purchase>> editPurchase(@PathVariable("id") String id, @RequestBody Purchase p) {
-        ObjectId purchase_id = new ObjectId(id);
-        Purchase oldp = repository.findById(purchase_id).block();
-        if (oldp == null)
-            return new ResponseEntity<>(Mono.just(new Purchase(null, null, null, null)), HttpStatus.NOT_FOUND);
-
-        p.set_id(purchase_id);
-
-        return new ResponseEntity<>(repository.save(p), HttpStatus.OK);
-    }
-
     @PostMapping(path = "/", consumes = "application/JSON", produces = "application/JSON")
     public Mono<Purchase> newPurchase(@RequestBody Purchase p) {
         metrics.increment();

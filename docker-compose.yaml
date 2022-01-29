@@ -1,5 +1,9 @@
 version: '3'
 
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
 x-mongo-secrets: 
   MONGO_USER: &mongo-user root
   MONGO_PASS: &mongo-pass toor
@@ -131,3 +135,32 @@ services:
       JMX_PORT: 9999
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+
+  prometheus:
+    image: prom/prometheus:v2.1.0
+    volumes:
+      - ./prometheus-docker/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    restart: always
+
+  grafana:
+    image: grafana/grafana
+    user: "472"
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana-docker/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./grafana-docker/config.monitoring
+    restart: always

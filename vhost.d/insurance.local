@@ -13,3 +13,12 @@ location /policies {
 location /optionals {
   proxy_pass http://policy-service:8080;
 }
+
+location /metrics {
+  proxy_pass http://prometheus:9090;
+}
+
+location /targets {
+  proxy_pass http://prometheus:9090;
+}
+

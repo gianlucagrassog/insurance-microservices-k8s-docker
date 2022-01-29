@@ -80,14 +80,26 @@ If you want to use also different sender address, substitute email and password 
 # Create a user
 curl insurance.local/users/ -X POST -H "Content-Type: application/json" -d '{"name": "Bill Gates", "age": 18, "bmclass": 10}'
 
+# Delete a user
+curl insurance.local/users/{_id} -X DELETE
+
 # Create a policy
 curl insurance.local/policies/ -X POST -H "Content-Type: application/json" -d '{"name": "Policy1", "type": "bonus malus", "description": "I am a insurance policy"}'
+
+# Delete a policy
+curl insurance.local/policies/{_id} -X DELETE
 
 #Create a optional
 curl insurance.local/optionals/ -X POST -H "Content-Type: application/json" -d '{"name": "Optional1", "price": 70.5, "description": "I am a optional"}'
 
+# Delete a optional
+curl insurance.local/optionals/{_id} -X DELETE
+
 # Create a purchase
 curl insurance.local/purchases -X POST -H "Content-Type: application/json" -d '{"description":"my purchase", "user": "...", "policy": "...", "optionals_list": ["...","..."]}'
+
+# Delete a purchase
+curl insurance.local/purchases/{_id} -X DELETE
 
 # Get the users
 curl insurance.local/users/
@@ -120,3 +132,4 @@ Delete all images using the following command:
 ```
 docker rmi -f $(docker images -aq)
 ```
+curl insurance.local/users/ -X PUT -H "Content-Type: application/json" -d '{"_id":"61f56d70daa4d40009dc4224", name": "Alfio Gates", "age": 18, "bmclass": 10}'
