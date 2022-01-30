@@ -1,5 +1,4 @@
 package com.insurance.userservice.controllers;
-
 import com.insurance.userservice.model.User;
 import com.insurance.userservice.repository.ReactiveUserRepository;
 import org.bson.types.ObjectId;
@@ -10,14 +9,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import org.springframework.beans.factory.annotation.Value;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
     @Autowired
     ReactiveUserRepository repository;
+
+    private final UserMetrics metrics;
 
     @GetMapping("/")
     public Flux<User> getUsers() {
@@ -55,7 +71,35 @@ public class UserController {
 
     @PostMapping(path="/", consumes={"application/JSON"}, produces="application/json")
     public Mono<User> createUser(@RequestBody User u) {
+        metrics.increment();
         return repository.save(u);
     }
 
+}
+
+@Component
+@RequiredArgsConstructor
+class UserMetrics {
+    @Qualifier("userCounter")
+    private final Counter counter;
+
+    void increment() {
+        counter.increment();
+    }
+
+    long value() {
+        return (long) counter.count();
+    }
+}
+
+@Configuration
+@RequiredArgsConstructor
+class UserMetricsConfig {
+    @Bean
+    @Qualifier("userCounter")
+    Counter userCounter(MeterRegistry registry) {
+        return Counter.builder("user_counter")
+                .description("Number of counters")
+                .register(registry);
+    }
 }
